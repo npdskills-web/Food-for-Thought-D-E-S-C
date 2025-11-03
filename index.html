@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Food for Thought — Assertive Communication</title>
+  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+body {
+  box-sizing: border-box;
+  font-family: 'Titillium Web', Helvetica, Arial, sans-serif;
+  color: #303030;
+  margin: 0;
+  padding: 0 3%;
+  background: #ffffff;
+}
+
+.container {
+  margin: 2rem auto;
+}
+
+.title {
+  font-size: 1.8em;
+  color: #004393;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 1.6rem;
+}
+
+p,
+.task-instruction,
+input[type="text"],
+button.check-btn,
+.feedback {
+  font-size: 1em; /* unified text size */
+  font-family: inherit;
+}
+
+p {
+  margin-bottom: 0.8rem;
+  font-weight: 400;
+}
+
+.task-instruction {
+  font-weight: 600;
+  color: #004393;
+  margin-bottom: 1.8rem;
+}
+
+.input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.3rem; /* tight spacing */
+}
+
+input[type="text"] {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 1.5rem;
+  box-sizing: border-box;
+  font-size: 1em;
+}
+
+button.check-btn {
+  font-weight: 600;
+  border: none;
+  border-radius: 1.5rem;
+  cursor: pointer;
+  background: #004393;
+  color: #fff;
+  width: 70px;
+  height: 38px;
+  font-size: 1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+button.check-btn:hover {
+  background: #003366;
+}
+
+.progress-bar {
+  background: #e9ecef;
+  border-radius: 0.6rem;
+  height: 0.5rem;
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
+
+.progress-fill {
+  background: linear-gradient(90deg, #69b244, #004393);
+  height: 100%;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+.feedback {
+  padding: 0.4rem;
+  border-radius: 0.5rem;
+  margin-top: 0.3rem;
+  margin-bottom: 0.3rem;
+  opacity: 0;
+  transition: opacity 0.4s ease, margin-bottom 0.3s ease;
+  font-size: 1em;
+}
+
+.feedback.visible {
+  opacity: 1;
+  margin-bottom: 1.3rem;
+}
+
+.correct {
+  background: #e8f5e8;
+  border: 1px solid #a8d4a8;
+  color: #27632a;
+}
+
+.incorrect {
+  background: #fdeaea;
+  border: 1px solid #e8a1a1;
+  color: #8c1a1a;
+}
+
+.hint {
+  background: #fff3cd;
+  border: 1px solid #ffeeba;
+  color: #856404;
+  display: block;
+  margin-top: 0.3rem;
+  padding: 0.3rem;
+  border-radius: 0.4rem;
+  font-size: 1em;
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="title">Food for Thought</div>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div>
+      <p>You’ve been working with a colleague who often sends you their part of a shared project later than agreed. This pattern creates unnecessary stress and makes it harder for you to complete your work on time. You want to discuss it directly and professionally.</p>
+      <div class="task-instruction">You’re planning to talk with your colleague about this issue. Try breaking your message down using the D-E-S-C model.</div>
+    </div>
+
+    <div class="input-section">
+      <div class="input-row">
+        <button class="check-btn" onclick="checkAnswer(0)">Check</button>
+        <input type="text" id="input0" placeholder="Describe what happens, clearly and factually">
+      </div>
+      <div id="feedback0" class="feedback"></div>
+
+      <div class="input-row">
+        <button class="check-btn" onclick="checkAnswer(1)">Check</button>
+        <input type="text" id="input1" placeholder="Express how it affects or feels to you">
+      </div>
+      <div id="feedback1" class="feedback"></div>
+
+      <div class="input-row">
+        <button class="check-btn" onclick="checkAnswer(2)">Check</button>
+        <input type="text" id="input2" placeholder="Specify what you’d like to see change">
+      </div>
+      <div id="feedback2" class="feedback"></div>
+
+      <div class="input-row">
+        <button class="check-btn" onclick="checkAnswer(3)">Check</button>
+        <input type="text" id="input3" placeholder="Clarify the positive result of this change">
+      </div>
+      <div id="feedback3" class="feedback"></div>
+    </div>
+  </div>
+
+  <script>
+const descKeywords = [
+  ["when", "whenever", "each time"], // D
+  ["i feel", "it feels", "feeling", "it is", "me"], // E
+  ["want","would","i’d","it'd","appreciate","please","i will"], // S
+  ["if","so that","that way","this way","this would","it would"] // C
+];
+
+let attempts = [0,0,0,0];
+let correctAnswers = [false, false, false, false];
+
+function checkAnswer(index) {
+  const input = document.getElementById(`input${index}`).value.toLowerCase().trim();
+  const feedbackEl = document.getElementById(`feedback${index}`);
+  attempts[index]++;
+
+  const hasKeyword = descKeywords[index].some(kw => input.includes(kw));
+  let feedbackText = "";
+  let isCorrect = false;
+
+  if (hasKeyword && input.length > 8) {
+    isCorrect = true;
+    const labels = ["Description", "Expression", "Specification", "Consequence"];
+    feedbackText = `✓ Nicely done — your ${labels[index]} step works well.`;
+  } else {
+    const prompts = [
+      "Keep it factual — begin with something like 'When...' or 'Each time...'.",
+      "Share your reaction — try using 'I feel...' or 'It feels...'.",
+      "State what you'd prefer — e.g., 'I would like...' or 'Please try to...'.",
+      "Show why it matters — e.g., 'So that deadlines are easier to meet...'."
+    ];
+    feedbackText = prompts[index];
+    if (attempts[index] >= 2) {
+      feedbackText += `<span class='hint'>Hint: Include one of these: ${descKeywords[index].join(', ')}</span>`;
+    }
+  }
+
+  feedbackEl.innerHTML = feedbackText;
+  feedbackEl.className = `feedback visible ${isCorrect ? 'correct' : 'incorrect'}`;
+
+  if (isCorrect && !correctAnswers[index]) {
+    correctAnswers[index] = true;
+    updateProgress();
+  }
+}
+
+function updateProgress() {
+  const completed = correctAnswers.filter(Boolean).length;
+  const percentage = (completed / 4) * 100;
+  document.getElementById('progressFill').style.width = `${percentage}%`;
+}
+  </script>
+</body>
+</html>
